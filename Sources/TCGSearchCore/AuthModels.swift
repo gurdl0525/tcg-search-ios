@@ -37,3 +37,9 @@ struct RefreshTokenRequest: Encodable {
         case refreshToken = "refresh_token"
     }
 }
+
+struct APIErrorResponse: Decodable, Equatable {
+    let code: String
+    let message: String?
+    let status: String?
+}

@@ -100,7 +100,7 @@ final class AuthClientTests: XCTestCase {
     func testUnexpectedStatusThrowsHTTPStatus() async throws {
         let transport = MockHTTPTransport(
             statusCode: 401,
-            body: Data(#"{"code":"INVALID_LOGIN_CREDENTIALS"}"#.utf8),
+            body: Data(#"{"code":"INVALID_LOGIN_CREDENTIALS","message":"Invalid login credentials.","status":"401 UNAUTHORIZED"}"#.utf8),
         )
         let client = AuthClient(
             baseURL: URL(string: "http://localhost:8080")!,
@@ -115,7 +115,17 @@ final class AuthClientTests: XCTestCase {
             )
             XCTFail("Expected login to throw")
         } catch let error as AuthClientError {
-            XCTAssertEqual(error, .httpStatus(401))
+            XCTAssertEqual(
+                error,
+                .httpStatus(
+                    401,
+                    apiError: APIErrorResponse(
+                        code: "INVALID_LOGIN_CREDENTIALS",
+                        message: "Invalid login credentials.",
+                        status: "401 UNAUTHORIZED",
+                    ),
+                ),
+            )
         }
     }
 

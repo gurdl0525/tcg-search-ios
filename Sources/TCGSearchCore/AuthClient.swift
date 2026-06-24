@@ -44,7 +44,7 @@ struct AuthClient: AuthAPI {
         let (_, response) = try await transport.data(for: request)
 
         guard response.statusCode == 204 else {
-            throw AuthClientError.httpStatus(response.statusCode)
+            throw AuthClientError.httpStatus(response.statusCode, apiError: nil)
         }
     }
 
@@ -57,7 +57,10 @@ struct AuthClient: AuthAPI {
         let (data, response) = try await transport.data(for: request)
 
         guard response.statusCode == expectedStatus else {
-            throw AuthClientError.httpStatus(response.statusCode)
+            throw AuthClientError.httpStatus(
+                response.statusCode,
+                apiError: Self.decodeAPIError(from: data),
+            )
         }
 
         return try JSONDecoder().decode(TokenPair.self, from: data)
@@ -72,9 +75,17 @@ struct AuthClient: AuthAPI {
         request.httpBody = try JSONEncoder().encode(body)
         return request
     }
+
+    private static func decodeAPIError(from data: Data) -> APIErrorResponse? {
+        guard !data.isEmpty else {
+            return nil
+        }
+
+        return try? JSONDecoder().decode(APIErrorResponse.self, from: data)
+    }
 }
 
 enum AuthClientError: Error, Equatable {
     case invalidResponse
-    case httpStatus(Int)
+    case httpStatus(Int, apiError: APIErrorResponse?)
 }

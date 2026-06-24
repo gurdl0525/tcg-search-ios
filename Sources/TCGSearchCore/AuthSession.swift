@@ -34,7 +34,7 @@ final class AuthSession: ObservableObject {
 
         do {
             let tokenPair = try await api.login(id: id, password: password, deviceId: deviceId)
-            try save(tokenPair)
+            save(tokenPair)
         } catch {
             errorMessage = Self.message(for: error)
         }
@@ -46,7 +46,7 @@ final class AuthSession: ObservableObject {
 
         do {
             let tokenPair = try await api.signUp(id: id, password: password, deviceId: deviceId)
-            try save(tokenPair)
+            save(tokenPair)
         } catch {
             errorMessage = Self.message(for: error)
         }
@@ -63,7 +63,7 @@ final class AuthSession: ObservableObject {
 
         do {
             let tokenPair = try await api.refresh(refreshToken: refreshToken)
-            try save(tokenPair)
+            save(tokenPair)
         } catch {
             errorMessage = Self.message(for: error)
         }
@@ -86,24 +86,49 @@ final class AuthSession: ObservableObject {
         }
     }
 
-    private func save(_ tokenPair: TokenPair) throws {
-        try tokenStore.save(tokenPair)
+    private func save(_ tokenPair: TokenPair) {
         self.tokenPair = tokenPair
-        errorMessage = nil
+
+        do {
+            try tokenStore.save(tokenPair)
+            errorMessage = nil
+        } catch {
+            errorMessage = Self.message(for: error)
+        }
     }
 
     private static func message(for error: Error) -> String {
+        if case let TokenStoreError.keychain(status) = error {
+            return "세션은 시작됐지만 토큰을 기기에 저장하지 못했습니다. (\(status))"
+        }
+
+        if error is TokenStoreError {
+            return "세션은 시작됐지만 토큰을 기기에 저장하지 못했습니다."
+        }
+
         guard let error = error as? AuthClientError else {
             return "요청을 처리하지 못했습니다."
         }
 
         switch error {
-        case .httpStatus(401):
-            return "인증 정보를 확인해 주세요."
-        case .httpStatus(409):
-            return "이미 사용 중인 ID입니다."
-        case .httpStatus:
-            return "서버 요청이 실패했습니다."
+        case let .httpStatus(statusCode, apiError):
+            switch apiError?.code {
+            case "INVALID_LOGIN_CREDENTIALS":
+                return "아이디 또는 비밀번호를 확인해 주세요."
+            case "DUPLICATE_USER_ID":
+                return "이미 사용 중인 아이디입니다."
+            case "VALIDATION_ERROR":
+                return "입력값을 다시 확인해 주세요."
+            default:
+                switch statusCode {
+                case 401:
+                    return "인증 정보를 확인해 주세요."
+                case 409:
+                    return "이미 사용 중인 아이디입니다."
+                default:
+                    return "서버 요청이 실패했습니다."
+                }
+            }
         case .invalidResponse:
             return "서버 응답을 확인할 수 없습니다."
         }

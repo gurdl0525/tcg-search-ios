@@ -5,14 +5,13 @@ struct AppRootView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if session.isSignedIn {
-                    SessionSummaryView()
-                } else {
-                    AuthView()
-                }
+            if session.isSignedIn {
+                SessionSummaryView()
+                    .navigationTitle("세션")
+            } else {
+                AuthView()
+                    .toolbar(.hidden, for: .navigationBar)
             }
-            .navigationTitle("TCG Search")
         }
         .task {
             session.restore()
