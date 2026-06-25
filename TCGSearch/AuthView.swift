@@ -577,15 +577,25 @@ private struct AuthBackground: View {
     let theme: AuthTheme
 
     var body: some View {
-        ZStack {
-            theme.canvas
+        GeometryReader { proxy in
+            ZStack {
+                theme.canvas
+                theme.diagonalWash
+                theme.topAmbientGlow
+                theme.lowerCollectorGlow
 
-            RoundedRectangle(cornerRadius: 48, style: .continuous)
-                .fill(theme.backgroundGlass)
-                .frame(maxWidth: 420, minHeight: 540, maxHeight: 620)
-                .padding(.horizontal, 18)
-                .blur(radius: 0.2)
-                .shadow(color: .black.opacity(theme.isBlack ? 0.22 : 0.12), radius: 21, x: 0, y: 22)
+                RoundedRectangle(cornerRadius: 40, style: .continuous)
+                    .fill(theme.backgroundGlass)
+                    .frame(
+                        width: min(345, max(0, proxy.size.width - AuthMetrics.horizontalMargin * 2)),
+                        height: theme.backgroundWashHeight,
+                    )
+                    .shadow(color: .black.opacity(theme.isBlack ? 0.18 : 0.12), radius: 21, x: 0, y: 22)
+                    .position(
+                        x: proxy.size.width / 2,
+                        y: min(proxy.size.height * 0.62, proxy.size.height - theme.backgroundWashHeight / 2),
+                    )
+            }
         }
     }
 }
@@ -677,7 +687,87 @@ private struct AuthTheme {
     }
 
     var backgroundGlass: Color {
-        isBlack ? AuthPalette.darkSurface.opacity(0.22) : Color.white.opacity(0.28)
+        isBlack ? AuthPalette.darkSurface.opacity(0.22) : Color.white.opacity(0.26)
+    }
+
+    var backgroundWashHeight: CGFloat {
+        isBlack ? 444 : 392
+    }
+
+    var diagonalWash: LinearGradient {
+        if isBlack {
+            LinearGradient(
+                stops: [
+                    .init(color: AuthPalette.darkWash.opacity(0.48), location: 0),
+                    .init(color: AuthPalette.blackCanvas.opacity(0.08), location: 0.48),
+                    .init(color: AuthPalette.collectorBlue.opacity(0.38), location: 1),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing,
+            )
+        } else {
+            LinearGradient(
+                stops: [
+                    .init(color: AuthPalette.mintWash.opacity(0.38), location: 0),
+                    .init(color: AuthPalette.lightCanvas.opacity(0.04), location: 0.52),
+                    .init(color: AuthPalette.blueWash.opacity(0.32), location: 1),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing,
+            )
+        }
+    }
+
+    var topAmbientGlow: RadialGradient {
+        if isBlack {
+            RadialGradient(
+                stops: [
+                    .init(color: AuthPalette.sub.opacity(0.22), location: 0),
+                    .init(color: AuthPalette.collectorBlue.opacity(0.08), location: 0.42),
+                    .init(color: AuthPalette.blackCanvas.opacity(0), location: 1),
+                ],
+                center: UnitPoint(x: 0.5, y: 0.08),
+                startRadius: 0,
+                endRadius: 360,
+            )
+        } else {
+            RadialGradient(
+                stops: [
+                    .init(color: Color.white.opacity(0.62), location: 0),
+                    .init(color: AuthPalette.sub.opacity(0.12), location: 0.36),
+                    .init(color: AuthPalette.lightCanvas.opacity(0), location: 1),
+                ],
+                center: UnitPoint(x: 0.5, y: 0.08),
+                startRadius: 0,
+                endRadius: 360,
+            )
+        }
+    }
+
+    var lowerCollectorGlow: RadialGradient {
+        if isBlack {
+            RadialGradient(
+                stops: [
+                    .init(color: AuthPalette.collectorBlue.opacity(0.14), location: 0),
+                    .init(color: AuthPalette.sub.opacity(0.06), location: 0.5),
+                    .init(color: AuthPalette.blackCanvas.opacity(0), location: 1),
+                ],
+                center: UnitPoint(x: 0.52, y: 0.92),
+                startRadius: 0,
+                endRadius: 420,
+            )
+        } else {
+            RadialGradient(
+                stops: [
+                    .init(color: AuthPalette.collectorBlue.opacity(0.12), location: 0),
+                    .init(color: AuthPalette.sub.opacity(0.06), location: 0.48),
+                    .init(color: AuthPalette.lightCanvas.opacity(0), location: 1),
+                ],
+                center: UnitPoint(x: 0.52, y: 0.92),
+                startRadius: 0,
+                endRadius: 420,
+            )
+        }
     }
 
     var textPrimary: Color {
@@ -729,6 +819,10 @@ private enum AuthPalette {
     static let lightCanvas = Color(red: 244 / 255, green: 248 / 255, blue: 243 / 255)
     static let blackCanvas = Color(red: 7 / 255, green: 11 / 255, blue: 9 / 255)
     static let darkSurface = Color(red: 14 / 255, green: 50 / 255, blue: 37 / 255)
+    static let darkWash = Color(red: 28 / 255, green: 74 / 255, blue: 54 / 255)
+    static let mintWash = Color(red: 187 / 255, green: 236 / 255, blue: 211 / 255)
+    static let blueWash = Color(red: 211 / 255, green: 228 / 255, blue: 255 / 255)
+    static let collectorBlue = Color(red: 62 / 255, green: 131 / 255, blue: 236 / 255)
     static let main = Color(red: 31 / 255, green: 122 / 255, blue: 87 / 255)
     static let sub = Color(red: 63 / 255, green: 174 / 255, blue: 139 / 255)
     static let textPrimary = Color(red: 7 / 255, green: 11 / 255, blue: 9 / 255)
