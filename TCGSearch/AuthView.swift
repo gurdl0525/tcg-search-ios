@@ -72,7 +72,7 @@ struct AuthView: View {
 
     private func serviceHeader(theme: AuthTheme) -> some View {
         VStack(spacing: 12) {
-            BrandMark(theme: theme)
+            BrandMark()
 
             Text("TCG Search")
                 .authFont(size: 34, weight: .bold)
@@ -408,31 +408,13 @@ private enum AuthField {
 }
 
 private struct BrandMark: View {
-    let theme: AuthTheme
-
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [AuthPalette.main, AuthPalette.sub],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing,
-                    )
-                )
-
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(theme.isBlack ? 0.18 : 0.52), lineWidth: 1)
-
-            Text("TCG")
-                .authFont(size: 17, weight: .heavy)
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(width: 58, height: 58)
-        .shadow(color: AuthPalette.main.opacity(theme.isBlack ? 0.34 : 0.22), radius: 22, x: 0, y: 12)
-        .accessibilityHidden(true)
+        Image("LaunchMark")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 58, height: 58)
+            .shadow(color: AuthPalette.main.opacity(0.22), radius: 22, x: 0, y: 12)
+            .accessibilityHidden(true)
     }
 }
 
