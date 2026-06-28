@@ -21,6 +21,7 @@
 		2A000000000000000000010B /* SessionSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000000000000000000020B /* SessionSummaryView.swift */; };
 		2A000000000000000000010C /* TCGSearchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000000000000000000020C /* TCGSearchApp.swift */; };
 		2A000000000000000000010D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A000000000000000000020E /* Assets.xcassets */; };
+		2A000000000000000000010F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A0000000000000000000212 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		2A000000000000000000020E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2A000000000000000000020F /* TCGSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCGSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A0000000000000000000210 /* TCGSearch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TCGSearch.entitlements; sourceTree = "<group>"; };
+		2A0000000000000000000212 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				2A000000000000000000020B /* SessionSummaryView.swift */,
 				2A000000000000000000020C /* TCGSearchApp.swift */,
 				2A000000000000000000020D /* Info.plist */,
+				2A0000000000000000000212 /* LaunchScreen.storyboard */,
 				2A0000000000000000000210 /* TCGSearch.entitlements */,
 				2A000000000000000000020E /* Assets.xcassets */,
 			);
@@ -160,6 +163,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A000000000000000000010D /* Assets.xcassets in Resources */,
+				2A000000000000000000010F /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
