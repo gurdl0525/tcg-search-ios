@@ -53,7 +53,7 @@ struct SessionSummaryView: View {
                     .zIndex(2)
             }
         }
-        .animation(.easeOut(duration: 0.2), value: isShowingFilter)
+        .animation(CardSearchMotion.filterSheet, value: isShowingFilter)
         .animation(.easeOut(duration: 0.18), value: selectedTab)
         .toolbar(.hidden, for: .navigationBar)
     }
@@ -89,7 +89,7 @@ struct SessionSummaryView: View {
                         }
                     },
                     showFilter: {
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        withAnimation(CardSearchMotion.filterSheet) {
                             isShowingFilter = true
                         }
                     },
@@ -110,9 +110,9 @@ struct SessionSummaryView: View {
         ZStack(alignment: .bottom) {
             theme.filterScrim
                 .ignoresSafeArea()
-                .transition(.opacity)
+                .transition(.opacity.animation(CardSearchMotion.filterScrim))
                 .onTapGesture {
-                    withAnimation(.easeOut(duration: 0.2)) {
+                    withAnimation(CardSearchMotion.filterSheet) {
                         isShowingFilter = false
                     }
                 }
@@ -133,12 +133,15 @@ struct SessionSummaryView: View {
                     }
                 },
                 close: {
-                    withAnimation(.easeOut(duration: 0.2)) {
+                    withAnimation(CardSearchMotion.filterSheet) {
                         isShowingFilter = false
                     }
                 },
             )
-            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .transition(.asymmetric(
+                insertion: .move(edge: .bottom).combined(with: .opacity),
+                removal: .move(edge: .bottom).combined(with: .opacity),
+            ))
         }
     }
 }
@@ -213,7 +216,7 @@ private struct CardSearchResultsView: View {
                     theme: theme,
                     onSubmit: {},
                     filterAction: {
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        withAnimation(CardSearchMotion.filterSheet) {
                             isShowingFilter = true
                         }
                     },
@@ -1459,6 +1462,11 @@ private enum CardSearchMetrics {
         let artWidth = resultArtWidth(forCardWidth: cardWidth)
         return resultArtInset + resultArtHeight(forArtWidth: artWidth) + resultArtInfoSpacing + resultInfoHeight + resultArtInset
     }
+}
+
+private enum CardSearchMotion {
+    static let filterSheet = Animation.spring(response: 0.36, dampingFraction: 0.88, blendDuration: 0.08)
+    static let filterScrim = Animation.easeOut(duration: 0.16)
 }
 
 private struct CardSearchTheme {
