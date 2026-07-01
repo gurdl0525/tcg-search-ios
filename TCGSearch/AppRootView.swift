@@ -36,7 +36,7 @@ struct AppRootView: View {
         NavigationStack {
             if session.isSignedIn {
                 SessionSummaryView()
-                    .navigationTitle("세션")
+                    .toolbar(.hidden, for: .navigationBar)
             } else {
                 AuthView()
                     .toolbar(.hidden, for: .navigationBar)

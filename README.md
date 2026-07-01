@@ -15,6 +15,11 @@ Request and response JSON matches the backend snake_case contract, including
 `device_id`, `refresh_token`, `access_token`, `token_type`, and `expires_in`.
 Token pairs are stored in Keychain.
 
+## Card Search Contract
+
+Screen-level card search API requirements are documented in
+`docs/card-search-api-requirements.md`.
+
 ## Local Backend URL
 
 The default API base URL is set in `TCGSearch/Info.plist`:
